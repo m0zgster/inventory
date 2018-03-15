@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -42,6 +43,7 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Collection<ProductDto> findAll() {
         logger.info("findAll");
 
@@ -58,6 +60,7 @@ public class ProductController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ProductDto findOne(@PathVariable("id") Long id) {
         logger.info("Find product by id {}", id);
         return mapper.map(productService.findProduct(id), ProductDto.class);
@@ -66,6 +69,7 @@ public class ProductController {
     /* Возможно, я неправильно понял пункт Find product by name... */
     @GetMapping(value = "/search")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Collection<ProductDto> searchProducts(@RequestParam(value = "name") String name) {
         logger.info("Search product '{}'", name);
 
@@ -83,6 +87,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> create(@Valid @RequestBody ProductDto productDto) {
         logger.info("Create new product: {}", productDto);
 
@@ -97,6 +102,7 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> update(@PathVariable("id") Long id, @Valid @RequestBody ProductDto productDto) {
         logger.info("Update product: {}", productDto);
 
@@ -114,6 +120,7 @@ public class ProductController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable("id") Long id) {
         logger.info("Delete product with id: {}", id);
         productService.deleteProduct(id);
