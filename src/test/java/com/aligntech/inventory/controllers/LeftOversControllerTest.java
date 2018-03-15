@@ -9,10 +9,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
+import static com.aligntech.inventory.controllers.AuthUtils.createHttpAuthenticationHeaderValue;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,14 +39,21 @@ public class LeftOversControllerTest {
     @Autowired
     private ProductService productService;
 
+    private HttpHeaders headers = new HttpHeaders();
+
+
     @Before
     public void setUp() {
+        headers.add(AuthUtils.AUTH_HEADER, createHttpAuthenticationHeaderValue());
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
         createTestProduct();
     }
 
     @Test
     public void testFindAllLeftOvers() throws Exception {
         mvc.perform(get("/leftovers")
+                .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -57,5 +68,7 @@ public class LeftOversControllerTest {
         product.setQuantity(1);
         productService.saveOrUpdate(product);
     }
+
+
 
 }
