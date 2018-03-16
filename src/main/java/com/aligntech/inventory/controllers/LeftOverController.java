@@ -39,7 +39,7 @@ public class LeftOverController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Collection<ProductDto> findAllLeftOvers() {
         logger.info("Find all leftovers");
 

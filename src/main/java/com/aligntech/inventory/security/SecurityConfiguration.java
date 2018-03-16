@@ -30,8 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login")
                 .and().authorizeRequests()
-                .antMatchers("/products/**", "/leftovers/**").hasRole("USER")
-                .antMatchers("/products/**", "/leftovers/**").hasRole("ADMIN")
+                .antMatchers("/products/**", "/leftovers/**").authenticated()
                 .and()
                 .csrf().disable()
                 .headers().frameOptions().disable();
