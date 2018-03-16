@@ -2,8 +2,10 @@ package com.aligntech.inventory.controllers;
 
 import com.aligntech.inventory.dto.ProductDto;
 import com.aligntech.inventory.entities.Product;
+import com.aligntech.inventory.exception.InventoryApplicationException;
 import com.aligntech.inventory.exception.ProductNotFoundException;
 import com.aligntech.inventory.service.ProductService;
+import com.aligntech.inventory.utils.ExcelHelper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,6 +87,30 @@ public class ProductController {
         }
 
         return Collections.emptyList();
+    }
+
+    //это, конечно, лучше подругому делать, но для демо можно и так показать, что я могу выгрузить результат в xls
+    @GetMapping(value = "/search/export/")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public void searchProducts(@RequestParam(value = "name") String name, HttpServletResponse response) {
+        logger.info("Search product '{}'", name);
+
+        if (!StringUtils.isEmpty(name)) {
+            Collection<Product> products = productService.findProductsByName(name);
+            logger.info("Found {} products", products.size());
+
+            try {
+                logger.info("Creating xls report...");
+                ExcelHelper.createExcelData(products, response);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                throw new InventoryApplicationException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Parameter 'name' cannot be null!");
+        }
+
     }
 
     @PostMapping

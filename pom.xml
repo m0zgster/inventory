@@ -13,6 +13,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <modelmapper.version>1.1.2</modelmapper.version>
+        <apache.poi.version>3.17</apache.poi.version>
     </properties>
 
     <parent>
@@ -48,6 +49,12 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi.version}</version>
         </dependency>
 
         <!-- for entities to dto conversions -->
