@@ -89,7 +89,7 @@ public class ProductController {
         return Collections.emptyList();
     }
 
-    //это, конечно, лучше подругому делать, но для демо можно и так показать, что я могу выгрузить результат в xls
+    //это, конечно, лучше подругому делать, но для демо можно и так показать, что я могу выгрузить результат в xls :)
     @GetMapping(value = "/search/export/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
